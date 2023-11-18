@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +32,13 @@ class GridAdapter(
 
         override fun onItemClicked(view: View, adapterPosition: Int) {
             val intent = ImagePagerActivity.makeIntent(activity, adapterPosition)
-            ActivityCompat.startActivity(activity, intent, null)
+            val image = view.findViewById<ImageView>(R.id.imageview_item)
+            val activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                activity,
+                image,
+                image.transitionName
+            )
+            ActivityCompat.startActivity(activity, intent, activityOptions.toBundle())
         }
     }
 

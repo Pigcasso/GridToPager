@@ -42,6 +42,7 @@ class ImageFragment : Fragment() {
                     target: Target<Drawable>,
                     isFirstResource: Boolean
                 ): Boolean {
+                    activity?.supportStartPostponedEnterTransition()
                     return false
                 }
 
@@ -52,6 +53,7 @@ class ImageFragment : Fragment() {
                     dataSource: DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
+                    activity?.supportStartPostponedEnterTransition()
                     return false
                 }
             })
