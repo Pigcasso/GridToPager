@@ -107,6 +107,7 @@ class GridActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val EXTRA_STARTING_POSITION = "extra_starting_position"
         const val EXTRA_CURRENT_POSITION = "extra_current_position"
     }
 }
