@@ -2,6 +2,7 @@ package com.github.pigcasso.samples.gridtopager
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,9 +59,25 @@ class ImageFragment : Fragment() {
                 }
             })
             .into(binding.image)
+
+        binding.image.setListener(object : PhotoView2.Listener {
+            override fun onDrag(view: PhotoView2, fraction: Float) {
+                Log.d(TAG, "onDrag: ")
+            }
+
+            override fun onRestore(view: PhotoView2, fraction: Float) {
+                Log.d(TAG, "onRestore: ")
+            }
+
+            override fun onRelease(view: PhotoView2) {
+                Log.d(TAG, "onRelease: ")
+                activity?.onBackPressed()
+            }
+        })
     }
 
     companion object {
+        private const val TAG = "ImageFragment"
         private const val EXTRA_ITEM = "item"
         fun newInstance(item: Item): ImageFragment {
             val args = Bundle()

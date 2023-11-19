@@ -19,8 +19,8 @@ class PhotoView2 @JvmOverloads constructor(
         fun onRelease(view: PhotoView2)
     }
 
-    private val scaledTouchSlop by lazy { ViewConfiguration.get(context).scaledTouchSlop.toFloat() }
-    private val dismissEdge by lazy { height }
+    private val scaledTouchSlop by lazy { ViewConfiguration.get(context).scaledTouchSlop * Config.SWIPE_TOUCH_SLOP }
+    private val dismissEdge by lazy { height * Config.DISMISS_FRACTION }
     private var singleTouch = true
     private var fakeDragOffset = 0f
     private var lastX = 0f
