@@ -1,5 +1,6 @@
 package com.github.pigcasso.samples.gridtopager
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +19,15 @@ class ImageFragment : Fragment() {
 
     private var _binding: FragmentImageBinding? = null
     private val binding get() = _binding!!
+
+    private var listener: PhotoView2.Listener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is PhotoView2.Listener) {
+            listener = context
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,15 +73,17 @@ class ImageFragment : Fragment() {
         binding.image.setListener(object : PhotoView2.Listener {
             override fun onDrag(view: PhotoView2, fraction: Float) {
                 Log.d(TAG, "onDrag: ")
+                listener?.onDrag(view, fraction)
             }
 
             override fun onRestore(view: PhotoView2, fraction: Float) {
                 Log.d(TAG, "onRestore: ")
+                listener?.onRestore(view, fraction)
             }
 
             override fun onRelease(view: PhotoView2) {
                 Log.d(TAG, "onRelease: ")
-                activity?.onBackPressed()
+                listener?.onRelease(view)
             }
         })
     }

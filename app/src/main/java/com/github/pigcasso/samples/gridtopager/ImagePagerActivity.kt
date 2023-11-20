@@ -3,6 +3,7 @@ package com.github.pigcasso.samples.gridtopager
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -13,7 +14,7 @@ import com.github.pigcasso.samples.gridtopager.GridActivity.Companion.EXTRA_CURR
 import com.github.pigcasso.samples.gridtopager.GridActivity.Companion.EXTRA_STARTING_POSITION
 import com.github.pigcasso.samples.gridtopager.databinding.ActivityImagePagerBinding
 
-class ImagePagerActivity : AppCompatActivity() {
+class ImagePagerActivity : AppCompatActivity(), PhotoView2.Listener {
 
     private lateinit var binding: ActivityImagePagerBinding
     private val viewModel: ItemViewModel by viewModels()
@@ -74,6 +75,23 @@ class ImagePagerActivity : AppCompatActivity() {
                 sharedElements?.put(names!![0], view.findViewById(R.id.image))
             }
         })
+    }
+
+    override fun onDrag(view: PhotoView2, fraction: Float) {
+        binding.background.updateBackgroundColor(
+            fraction,
+            Config.VIEWER_BACKGROUND_COLOR,
+            Color.TRANSPARENT
+        )
+    }
+
+    override fun onRestore(view: PhotoView2, fraction: Float) {
+        binding.background.changeToBackgroundColor(Config.VIEWER_BACKGROUND_COLOR)
+    }
+
+    override fun onRelease(view: PhotoView2) {
+        binding.background.changeToBackgroundColor(Color.TRANSPARENT)
+        onBackPressed()
     }
 
     companion object {
