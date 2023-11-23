@@ -44,7 +44,7 @@ class PhotoView2 @JvmOverloads constructor(
                     .setDuration(200).start()
             }
 
-            MotionEvent.ACTION_UP -> up()
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> up()
             MotionEvent.ACTION_MOVE -> {
                 if (singleTouch && scale == 1f) {
                     if (lastX == 0f) lastX = event.rawX
