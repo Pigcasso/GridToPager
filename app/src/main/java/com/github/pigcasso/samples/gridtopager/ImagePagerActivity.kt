@@ -28,6 +28,8 @@ class ImagePagerActivity : AppCompatActivity(), PhotoView2.Listener {
         binding = ActivityImagePagerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.background.setBackgroundColor(Config.VIEWER_BACKGROUND_COLOR)
+
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
