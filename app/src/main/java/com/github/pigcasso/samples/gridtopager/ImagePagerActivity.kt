@@ -9,12 +9,14 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.SharedElementCallback
+import androidx.core.view.get
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.github.pigcasso.samples.gridtopager.GridActivity.Companion.EXTRA_CURRENT_POSITION
 import com.github.pigcasso.samples.gridtopager.GridActivity.Companion.EXTRA_STARTING_POSITION
 import com.github.pigcasso.samples.gridtopager.databinding.ActivityImagePagerBinding
 
-class ImagePagerActivity : AppCompatActivity(), PhotoView2.Listener {
+class ImagePagerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityImagePagerBinding
     private val viewModel: ItemViewModel by viewModels()
@@ -43,8 +45,11 @@ class ImagePagerActivity : AppCompatActivity(), PhotoView2.Listener {
         startingPosition = intent.getIntExtra(EXTRA_STARTING_POSITION, 0)
         currentPosition = savedInstanceState?.getInt(EXTRA_CURRENT_POSITION) ?: startingPosition
 
+        val adapter = ImagePagerAdapter(this, startingPosition)
+        adapter.setListener(adapterListener)
+        binding.viewPager.adapter = adapter
         viewModel.items.observe(this) {
-            binding.viewPager.adapter = ImagePagerAdapter(this, it)
+            adapter.submitList(it)
             binding.viewPager.setCurrentItem(currentPosition, false)
         }
         viewModel.loadItems()
@@ -71,29 +76,42 @@ class ImagePagerActivity : AppCompatActivity(), PhotoView2.Listener {
                 sharedElements: MutableMap<String, View>?
             ) {
                 super.onMapSharedElements(names, sharedElements)
-                val currentFragment = supportFragmentManager
-                    .findFragmentByTag("f${viewPager.currentItem}") ?: return
-                val view = currentFragment.view ?: return
+                val selectedViewHolder =
+                    (viewPager[0] as RecyclerView).findViewHolderForAdapterPosition(currentPosition)
+                        ?: return
+                val view = selectedViewHolder.itemView
                 sharedElements?.put(names!![0], view.findViewById(R.id.image))
             }
         })
     }
 
-    override fun onDrag(view: PhotoView2, fraction: Float) {
-        binding.background.updateBackgroundColor(
-            fraction,
-            Config.VIEWER_BACKGROUND_COLOR,
-            Color.TRANSPARENT
-        )
-    }
+    private val adapterListener by lazy {
+        object : ImagePagerAdapterListener {
+            override fun onInit(viewHolder: RecyclerView.ViewHolder, position: Int) {
+                /* no-op */
+            }
 
-    override fun onRestore(view: PhotoView2, fraction: Float) {
-        binding.background.changeToBackgroundColor(Config.VIEWER_BACKGROUND_COLOR)
-    }
+            override fun onDrag(viewHolder: RecyclerView.ViewHolder, view: View, fraction: Float) {
+                binding.background.updateBackgroundColor(
+                    fraction,
+                    Config.VIEWER_BACKGROUND_COLOR,
+                    Color.TRANSPARENT
+                )
+            }
 
-    override fun onRelease(view: PhotoView2) {
-        binding.background.changeToBackgroundColor(Color.TRANSPARENT)
-        onBackPressed()
+            override fun onRestore(
+                viewHolder: RecyclerView.ViewHolder,
+                view: View,
+                fraction: Float
+            ) {
+                binding.background.changeToBackgroundColor(Config.VIEWER_BACKGROUND_COLOR)
+            }
+
+            override fun onRelease(viewHolder: RecyclerView.ViewHolder, view: View) {
+                binding.background.changeToBackgroundColor(Color.TRANSPARENT)
+                onBackPressed()
+            }
+        }
     }
 
     companion object {
